@@ -8,8 +8,7 @@
 namespace craft\debug;
 
 use Craft;
-use yii\data\ArrayDataProvider;
-use yii\db\ActiveRecord;
+use yii\web\IdentityInterface;
 
 /**
  * Debugger panel that collects and displays user info..
@@ -22,49 +21,16 @@ class UserPanel extends \yii\debug\panels\UserPanel
     /**
      * @inheritdoc
      */
-    public function save()
+    protected function identityData(IdentityInterface $identity)
     {
-        // Nearly identical to parent::save, except we redact any sensitive info from the panel.
+        list($data, $attributes) = parent::identityData($identity);
 
-        $user = Craft::$app->getUser();
-        $data = $user->getIdentity();
-
-        if ($data === null) {
-            return;
-        }
-
-        $authManager = Craft::$app->getAuthManager();
+        // Redact any sensitive attributes
         $security = Craft::$app->getSecurity();
-
-        $rolesProvider = null;
-        $permissionsProvider = null;
-
-        if ($authManager) {
-            $rolesProvider = new ArrayDataProvider([
-                'allModels' => $authManager->getRolesByUser($user->id),
-            ]);
-
-            $permissionsProvider = new ArrayDataProvider([
-                'allModels' => $authManager->getPermissionsByUser($user->id),
-
-            ]);
+        foreach ($data as $key => $value) {
+            $data[$key] = $security->redactIfSensitive($key, $value);
         }
 
-        $attributes = array_keys(get_object_vars($data));
-
-        if ($data instanceof ActiveRecord) {
-            $attributes = array_keys($data->getAttributes());
-        }
-
-        foreach ($attributes as $key) {
-            $data->$key = $security->redactIfSensitive($key, $data->$key);
-        }
-
-        return [
-            'identity' => $data,
-            'attributes' => $attributes,
-            'rolesProvider' => $rolesProvider,
-            'permissionsProvider' => $permissionsProvider,
-        ];
+        return [$data, $attributes];
     }
 }
