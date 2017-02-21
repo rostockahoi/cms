@@ -23,7 +23,7 @@ class UserPanel extends \yii\debug\panels\UserPanel
      */
     protected function identityData(IdentityInterface $identity)
     {
-        list($data, $attributes) = parent::identityData($identity);
+        $data = parent::identityData($identity);
 
         // Redact any sensitive attributes
         $security = Craft::$app->getSecurity();
@@ -31,6 +31,6 @@ class UserPanel extends \yii\debug\panels\UserPanel
             $data[$key] = $security->redactIfSensitive($key, $value);
         }
 
-        return [$data, $attributes];
+        return $data;
     }
 }
