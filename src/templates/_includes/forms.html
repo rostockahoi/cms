@@ -46,6 +46,11 @@
 {% endmacro %}
 
 
+{% macro typeSelect(config) %}
+    {% include "_includes/forms/typeSelect" with config only %}
+{% endmacro %}
+
+
 {% macro multiselect(config) %}
     {% include "_includes/forms/multiselect" with config only %}
 {% endmacro %}
@@ -165,6 +170,12 @@
 {% macro selectField(config) %}
     {% import _self as forms %}
     {{ forms.field(config, forms.select(config)) }}
+{% endmacro %}
+
+
+{% macro typeSelectField(config) %}
+    {% import _self as forms %}
+    {{ forms.field(config, forms.typeSelect(config)) }}
 {% endmacro %}
 
 

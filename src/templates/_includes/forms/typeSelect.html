@@ -1,0 +1,36 @@
+{% set class = (class is defined ? class~' ' : '') ~ 'selectize fullwidth' %}
+
+{% include "_includes/forms/select" %}
+
+{% set jsOptions = [] %}
+{% set pluginsService = craft.app.plugins %}
+
+{% for option in options %}
+    {% set jsOptions = jsOptions|merge([
+        {
+            label: option.label,
+            value: option.value,
+            plugin: plugins.getPluginByClass(option.value).name ?? null
+        }
+    ]) %}
+{% endfor %}
+
+{% js %}
+    $('#{{ id|namespaceInputId|e('js') }}').selectize({
+        dropdownParent: 'body',
+        options: {{ jsOptions|json_encode|raw }},
+        render: {
+            item: function(item, escape) {
+                return '<div>'+escape(item.label)+'</div>';
+            },
+            option: function(item, escape) {
+                var label = item.name || item.email;
+                var caption = item.name ? item.email : null;
+                return '<div>' +
+                    '<span class="label">' + escape(item.label) + '</span>' +
+                    (item.plugin ? '<span class="light">' + escape(item.plugin) + '</span>' : '') +
+                '</div>';
+            }
+        }
+    });
+{% endjs %}

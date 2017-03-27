@@ -56,7 +56,7 @@
         translatable: true
     }) }}
 
-    {{ forms.selectField({
+    {{ forms.typeSelectField({
         label: "Field Type"|t('app'),
         instructions: "What type of field is this?"|t('app'),
         warning: (fieldId is not empty and not field.hasErrors('type') ? "Changing this may result in data loss."|t('app')),
