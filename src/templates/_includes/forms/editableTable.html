@@ -93,7 +93,7 @@
         {% endfor %}
     </tbody>
 </table>
-{% if not staticRows %}
+{% if not staticRows  %}
     <div class="btn add icon">{{ addRowLabel is defined ? addRowLabel : "Add a row"|t('app') }}</div>
 {% endif %}
 
